@@ -1,5 +1,8 @@
 window.addEventListener("load", init, false);
 
+var diasporaWebApp = diasporaWebApp || {};
+diasporaWebApp.autologin = true;
+
 function init() {
   document.getElementById('login-form').addEventListener('submit', submit, false);
   
@@ -28,14 +31,20 @@ function init() {
       li.appendChild(linkToPod);
       list.appendChild(li);
     }
+
+    setTimeout(function(){ document.getElementById('podurl').value = window.localStorage.key(0); gotoPod()}, 500);
   }
 }
 
 function submit(e) {
   e.preventDefault();
+  gotoPod();
+}
+
+function gotoPod() {
   var handle = document.getElementById('podurl').value;
   var handleregexp = new RegExp(/[A-Za-z0-9_]+@(([a-zA-Z0-9\-]*)\.)+([A-Za-z0-9\-]{2,})/);
-  
+
   if (!handleregexp.test(handle)) {
     var error_message = document.getElementById('error');
     error_message.className = '';
@@ -43,6 +52,7 @@ function submit(e) {
   } else {
     // Store the handle in the localStorage
     window.localStorage.setItem(handle, "");
+
     // Redirect to the pod
     window.location = getUrl(handle);
   }
